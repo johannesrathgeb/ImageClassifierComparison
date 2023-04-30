@@ -11,7 +11,7 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='latin1')
     return dict
 
-def dt():
+def decision_tree():
     print('Decision Tree')
     clf = tree.DecisionTreeClassifier()
     clf.fit((data_batch_1['data'])[:500], (data_batch_1['labels'])[:500])
@@ -22,7 +22,7 @@ def dt():
     print('{}% of samples were correctly classified'.format(str(score * 100)))
     return
 
-def rf():
+def random_forest():
     print('Random Forest')
     clf = RandomForestClassifier()
     clf.fit((data_batch_1['data'])[:500], (data_batch_1['labels'])[:500])
@@ -33,7 +33,7 @@ def rf():
     print('{}% of samples were correctly classified'.format(str(score * 100)))
     return
 
-def gbt():
+def gradiant_boosting_tree():
     print('Gradient Boosting Tree')
     clf = GradientBoostingClassifier()
     clf.fit((data_batch_1['data'])[:500], (data_batch_1['labels'])[:500])
@@ -60,7 +60,7 @@ data = np.asarray((data_batch_1['data'])[:500])
 labels = np.asarray((data_batch_1['labels'])[:500])
 
 print(len(data))
-dt()
-rf()
-gbt()
+decision_tree()
+random_forest()
+gradiant_boosting_tree()
 #pickle.dump(best_estimator, open('./model.p', 'wb'))
