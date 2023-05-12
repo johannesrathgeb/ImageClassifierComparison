@@ -14,68 +14,65 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='latin1')
     return dict
 
-def run(name ,batch_length, test_length, clf):
+def run(name, batch_length, test_length, clf):
+    global training, training, scores
+    
     print(name)
+
     start_time = time.time()
-    clf.fit((train_data)[:batch_length], (train_labels)[:batch_length])
-    global training 
+    clf.fit(train_data[:batch_length], train_labels[:batch_length])
     training = training + (time.time() - start_time)
     print("Training Time: --- %s seconds ---" % (time.time() - start_time))
+
     start_time = time.time()
-    y_prediction = clf.predict((test_batch['data'])[:test_length])
-    global testing
+    y_prediction = clf.predict(test_data[:test_length])
     testing = testing + (time.time() - start_time)
     print("Testing Time: --- %s seconds ---" % (time.time() - start_time))
-    score = accuracy_score(y_prediction, (test_batch['labels'])[:test_length])
-    global scores
-    scores = scores + (score *100)
 
+    score = accuracy_score(y_prediction, test_labels[:test_length])
+    scores = scores + (score *100)
     print('{}% of samples were correctly classified'.format(str(score * 100)))
     return
 
-# prepare data
+# starting point
 input_dir = 'C:/Users/jrath/Documents/PickYourSquad/ImageClassifierComparison/cifar-10-batches-py/'
-
-data_batch_1=unpickle(input_dir + 'data_batch_1')
-data_batch_3=unpickle(input_dir + 'data_batch_3')
-data_batch_2=unpickle(input_dir + 'data_batch_2')
-data_batch_4=unpickle(input_dir + 'data_batch_4')
-data_batch_5=unpickle(input_dir + 'data_batch_5')
-test_batch=unpickle(input_dir + 'test_batch')
-
-data_batches = []
-data_batches.append(data_batch_1)
-data_batches.append(data_batch_2)
-data_batches.append(data_batch_3)
-data_batches.append(data_batch_4)
-data_batches.append(data_batch_5)
-
-train_data = np.concatenate([batch['data'] for batch in data_batches])
-train_labels = np.concatenate([batch['labels'] for batch in data_batches])
-
-#print(len(train_data))
-#print(len(train_labels))
-
 batch_length = 25000
 test_length = 10000
-
 scores = 0
 training = 0
 testing = 0
+runs = 5
 
+training_batches = []
 for i in range(1, 6):
-    #run("Decision Tree " + str(i), batch_length, test_length, tree.DecisionTreeClassifier(max_depth=3, max_features=0.1, min_samples_leaf=10, min_samples_split=10) )
+    training_batches.append(unpickle(input_dir + 'data_batch_' + i))
 
-    #run("Random Forest", batch_length, test_length, RandomForestClassifier(max_depth=25, max_features="sqrt", min_samples_leaf=1, min_samples_split=10))
+test_batch=unpickle(input_dir + 'test_batch')
+
+train_data = np.concatenate([batch['data'] for batch in training_batches])
+train_labels = np.concatenate([batch['labels'] for batch in training_batches])
+test_data = np.concatenate(test_batch['data'])
+test_labels = np.concatenate(test_batch['labels'])
+
+for i in range(1, runs + 1):
+    run("Decision Tree " + str(i), batch_length, test_length, tree.DecisionTreeClassifier(max_depth=3, max_features=0.1, min_samples_leaf=10, min_samples_split=10) )
+
+    run("Random Forest", batch_length, test_length, RandomForestClassifier(max_depth=25, max_features="sqrt", min_samples_leaf=1, min_samples_split=10))
 
     run("Gradiant Boosting Tree", batch_length, test_length, GradientBoostingClassifier(max_depth=5, max_features="sqrt", min_samples_leaf=10, min_samples_split=2))
 
-
 print()
 print("RESULTS")
-print(scores/5)
-print(training/5)
-print(testing/5)
+print(scores/runs)
+print(training/runs)
+print(testing/runs)
+
+
+
+
+
+
+
 
 #run("Random Forest", batch_length, test_length, RandomForestClassifier(max_depth=25, max_features=0.1, min_samples_leaf=1, min_samples_split=10)) #230s 42,2%
 #
