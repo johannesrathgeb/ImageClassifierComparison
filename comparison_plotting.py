@@ -49,6 +49,12 @@ fig.add_trace(
 fig.update_layout(
     title_text="<b>Decision Tree</b> vs <b>Random Forest</b> vs <b>Gradient Boosting Tree</b>"
 )
+fig.update_layout(legend=dict(
+    yanchor="top",
+    y=0.99,
+    xanchor="left",
+    x=0.01
+))
 
 # Set x-axis title
 fig.update_xaxes(title_text="Training Batch length")
